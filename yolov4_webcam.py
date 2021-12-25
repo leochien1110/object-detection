@@ -34,7 +34,7 @@ def get_yolo_preds(net, video_url, confidence_threshold, overlapping_threshold, 
 
     try:
         if not cap.isOpened():
-            print("Error opening video stream or file")
+            print("Error opening video https://medium.com/ching-i/yolo-c49f70241aa7stream or file")
             return
 
         yolo_width_height = (416, 416)
