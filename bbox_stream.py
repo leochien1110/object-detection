@@ -1,3 +1,4 @@
+# Detect mutliple objects and draw bounding boxes
 import cv2
 import imutils
 import numpy as np
@@ -29,7 +30,7 @@ def get_yolo_preds(net, video_url, confidence_threshold, overlapping_threshold, 
     colors = list(get_random_bright_colors(len(labels)))
 
     ln = net.getLayerNames()
-    ln = [ln[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+    ln = [ln[i - 1] for i in net.getUnconnectedOutLayers()]
     cap = cv2.VideoCapture(video_url)
 
     try:
@@ -95,7 +96,7 @@ def get_yolo_preds(net, video_url, confidence_threshold, overlapping_threshold, 
                     text_color = (255, 255, 255)
                     (text_width, text_height) = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, fontScale=1.0, thickness=1)[0]
                     box_coords = ((text_offset_x, text_offset_y), (text_offset_x + text_width - 80, text_offset_y - text_height + 4))
-                    cv2.rectan5ggle(frame, box_coords[0], box_coords[1], color, cv2.FILLED)
+                    cv2.rectangle(frame, box_coords[0], box_coords[1], color, cv2.FILLED)
                     
                     # draw bounding box title
                     cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, text_color, 1)
@@ -122,7 +123,7 @@ with open("model/coco.names","r", encoding="utf-8") as f:
 yolo_config_path = "model/yolov4-tiny.cfg"
 yolo_weights_path = "model/yolov4-tiny.weights"
 
-useCuda = False
+useCuda = True
 
 net = cv2.dnn.readNet(yolo_config_path, yolo_weights_path)
 
