@@ -1,6 +1,7 @@
 # Detect mutliple objects and draw bounding boxes
 import cv2
 import imutils
+import time
 import numpy as np
 import random
 import colorsys
@@ -32,6 +33,8 @@ def get_yolo_preds(net, video_url, confidence_threshold, overlapping_threshold, 
     ln = net.getLayerNames()
     ln = [ln[i - 1] for i in net.getUnconnectedOutLayers()]
     cap = cv2.VideoCapture(video_url)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    print(fps)
 
     try:
         if not cap.isOpened():
@@ -44,8 +47,10 @@ def get_yolo_preds(net, video_url, confidence_threshold, overlapping_threshold, 
         max_count = 0
 
         while True:
+            now = time.time()
+
             ret, frame = cap.read()
-            ret, frame = cap.read() # skip one frame
+            # ret, frame = cap.read() # skip one frame
 
             if not ret:
                 print("Video read failed or ended")
@@ -105,10 +110,19 @@ def get_yolo_preds(net, video_url, confidence_threshold, overlapping_threshold, 
             #    max_count = len(bboxes)
             #    cv2.imwrite('captured_' + str(counter) + '.jpg', frame) 
             cv2.imshow("YOLOv4 Object Detection", frame)
+
             key = cv2.waitKey(1) & 0xFF
             # if the `q` key was pressed, break the loop
             if key == ord("q") or key == 27:
                 break
+            
+            timeDiff = time.time() - now
+            if (timeDiff < 1.0/fps):
+                print(1.0/fps - timeDiff)
+                time.sleep(1.0/fps - timeDiff)
+            
+
+            
     finally:
         cap.release()
         cv2.destroyAllWindows()
@@ -131,9 +145,11 @@ if useCuda:
     net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
     net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
-video_url = 0
+# video_url = 0
 # video_url = "airplane_landing.mp4"
 # video_url = "https://cdn-004.whatsupcams.com/hls/hr_pula01.m3u8"
+# video_url = 'sedona_11_24_21.mp4'
+video_url = 'wanut_11032021.mp4'
 
 frame_width = 1280
 
